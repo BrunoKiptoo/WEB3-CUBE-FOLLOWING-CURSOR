@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import ComingSoonPoster from '../Assets/K4D_Coming-Soon.png';
+import ComingSoonPoster from '../Assets/K4D-logo.png';
 import BackgroundImage from '../Assets/Bard_Generated_Image (29).jpeg';
 
 const FOX3D = () => {
