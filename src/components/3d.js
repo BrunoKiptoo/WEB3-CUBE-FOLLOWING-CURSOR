@@ -1,13 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import ComingSoonPoster from '../Assets/K4D_Coming-Soon.png';
+import BackgroundImage from '../Assets/Bard_Generated_Image (29).jpeg';
 
 const FOX3D = () => {
   const containerRef = useRef();
   const mouse = new THREE.Vector2();
-  const cubeRef = useRef();
+  const imagePlaneRef = useRef();
 
   useEffect(() => {
-    let scene, camera, renderer, cube;
+    let scene, camera, renderer, imagePlane;
 
     // Initialize Three.js scene
     scene = new THREE.Scene();
@@ -30,14 +32,19 @@ const FOX3D = () => {
 
     containerRef.current.appendChild(renderer.domElement);
 
-    // Create a cube
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
-    cube = new THREE.Mesh(geometry, material);
-    cube.castShadow = true;
-    cube.receiveShadow = true;
-    scene.add(cube);
-    cubeRef.current = cube;
+    // Create image plane
+    const textureLoader = new THREE.TextureLoader();
+    const texture = textureLoader.load(ComingSoonPoster, (texture) => {
+      texture.minFilter = THREE.LinearFilter; // Set minification filter
+      texture.magFilter = THREE.LinearFilter; // Set magnification filter
+      texture.anisotropy = renderer.capabilities.getMaxAnisotropy(); // Enable anisotropic filtering
+    });
+    const geometry = new THREE.PlaneGeometry(4, 4); // Adjust size as needed
+    const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+    imagePlane = new THREE.Mesh(geometry, material);
+    imagePlane.position.set(0, 0, 0); // Adjust position as needed
+    scene.add(imagePlane);
+    imagePlaneRef.current = imagePlane;
 
     // Handle window resize
     window.addEventListener('resize', () => {
@@ -59,11 +66,11 @@ const FOX3D = () => {
     const animate = () => {
       requestAnimationFrame(animate);
 
-      // Rotate cube towards the cursor
-      const cubePosition = new THREE.Vector3();
-      cubeRef.current.getWorldPosition(cubePosition);
-      const targetRotation = Math.atan2(mouse.y - cubePosition.y, mouse.x - cubePosition.x);
-      cube.rotation.z = targetRotation;
+      // Rotate image plane towards the cursor
+      const imagePlanePosition = new THREE.Vector3();
+      imagePlaneRef.current.getWorldPosition(imagePlanePosition);
+      const targetRotation = Math.atan2(mouse.y - imagePlanePosition.y, mouse.x - imagePlanePosition.x);
+      imagePlane.rotation.z = targetRotation;
 
       renderer.render(scene, camera);
     };
@@ -81,5 +88,3 @@ const FOX3D = () => {
 };
 
 export default FOX3D;
-
-
